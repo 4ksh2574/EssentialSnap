@@ -2,7 +2,7 @@ import os, tempfile, shutil, subprocess, json, re
 from urllib.parse import urlparse
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import FileResponse
+from fastapi.responses import FileResponse\nfrom starlette.background import BackgroundTask
 from pydantic import BaseModel
 
 app=FastAPI(title='EssentialSnap API')
@@ -59,4 +59,4 @@ def download(body:Download):
         shutil.rmtree(tmp,ignore_errors=True);raise HTTPException(500,'No file produced.')
     path=found[0]
     def cleanup(): shutil.rmtree(tmp,ignore_errors=True)
-    return FileResponse(path,filename=os.path.basename(path),media_type='application/octet-stream',background=None)
+    return FileResponse(path,filename=os.path.basename(path),media_type='application/octet-stream',background=BackgroundTask(cleanup))
